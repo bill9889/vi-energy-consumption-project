@@ -1,5 +1,16 @@
+//Data
 var data_directory = "maps/latin-america.geojson"
 var csv_file = "data-dummy.csv"
+var csv_access_access = "./csv_assets/energy_access.csv"
+var csv_energy_consumption = "./csv_assets/energy_consumption.csv"
+var csv_inflation = "./csv_assets/inflation.csv"
+var csv_enrollment = "./csv_assets/school_enrollment.csv"
+
+//global
+var current_country = ""
+var current_data = ""
+
+//Specification
 var w = 900;
 var h = 600;
 var w2 = 1350;
@@ -8,6 +19,14 @@ var padding = 40;
 var spider_ratio = 2.5
 var innerRadius = 350
 var outerRadius = Math.min(w, h)
+
+function findCountryData(country, dataset){
+    for (let i=0; i < dataset.length; i++) {
+        if (dataset[i].country_name == country) {
+            return dataset[i];
+        }
+    }
+}
 
 function makeTitle(svg, name, subtitle) {
     svg.append("text")
@@ -45,6 +64,10 @@ function makeAxisTitles(svg, yaxis, xaxis) {
         .style("text-anchor", "middle")
         .style("font-family", "sans-serif")
         .text(xaxis);
+}
+function imp(var1){
+    console.log("dasda");
+    console.log(var1);
 }
 
 // Create the color function, and generate data for legends
@@ -103,7 +126,7 @@ var svg = d3.select("body").select("#Plot1")
     .append("svg")
     .attr("width", w2)
     .attr("height", h2)
-    .style("font-family", "sans-serif")
+    .style("font-family", "sans-serif");
     
 d3.json(data_directory).then( function(json) {
 
@@ -127,13 +150,47 @@ d3.json(data_directory).then( function(json) {
             } else {
                 return "#ccc";
             }
-        });
+        })
+
+        geos.on("click", function(d) {
+            svg.selectAll("path")
+                .transition()
+                .duration(150)
+                .style("fill", "#21918c")
+
+            d3.select(this)
+                .transition()
+                .duration(150)
+                .style("fill", "orange")
+
+            var xPosition = 250;
+            var yPosition = 250;
+    
+            d3.select("#tooltip")
+                    .style("left", (d.pageX) + "px")   
+                    .style("top", (d.pageY - 30) + "px")
+                    .select("#value")
+                    .text(d.currentTarget.__data__.properties.name);
+    
+            d3.select("#tooltip").classed("hidden", false)
+
+            current_country =  d.currentTarget.__data__.properties.name
+            var country_data_parsed = []
+
+            d3.csv(csv_access_access).then( function(data){
+                var country_data_raw = findCountryData(current_country, data)
+                Object.keys(country_data_raw).map((key) => country_data_parsed.push({"Year": key, "Data": country_data_raw[key]}));
+                console.log(country_data_raw)
+                console.log(country_data_parsed)
+            })
+
+          
+        })
 
     geos.on("mouseover", function(d) {
         d3.select(this)
             .transition()
             .duration(150)
-            .style("fill", "orange")
 
         var xPosition = 250;
         var yPosition = 250;
@@ -142,7 +199,7 @@ d3.json(data_directory).then( function(json) {
                 .style("left", (d.pageX) + "px")   
                 .style("top", (d.pageY - 30) + "px")
                 .select("#value")
-                .text(d.currentTarget.__data__.properties.name)
+                .text(d.currentTarget.__data__.properties.name);
 
         d3.select("#tooltip").classed("hidden", false)
 
@@ -184,17 +241,7 @@ d3.json(data_directory).then( function(json) {
         d3.select(this)
             .transition()
             .duration(300)
-            .style("fill", function(d) {
-                //Get data value
-                var value = 40000; //d.properties.income;
-                if (value) {
-                    //If value exists…
-                    return color(value);
-                } else {
-                    //If value is undefined…
-                    return "#ccc";
-                }
-            })
+
 
         d3.select("#tooltip").classed("hidden", true)
     })
@@ -202,11 +249,15 @@ d3.json(data_directory).then( function(json) {
 });
 
 d3.csv(csv_file).then( function(data) {
-  
+    current_data = data;
+
     var band = d3.scaleBand()
         .domain(data.map(d => d.State))
         .range([0, 2 * Math.PI])
         .align(0)
+
+
+    console.log(current_data)
 
     var radial = d3.scaleRadial()
         .domain([0, d3.max(data,(d, _, data) => {
