@@ -1,7 +1,7 @@
 //Data
 var data_directory = "maps/latin-america.geojson"
 var csv_file = "data-dummy.csv"
-var csv_access_access = "./csv_assets/energy_access.csv"
+var csv_access = "./csv_assets/energy_access.csv"
 var csv_energy_consumption = "./csv_assets/energy_consumption.csv"
 var csv_inflation = "./csv_assets/inflation.csv"
 var csv_enrollment = "./csv_assets/school_enrollment.csv"
@@ -27,6 +27,8 @@ function findCountryData(country, dataset){
         }
     }
 }
+
+
 
 function makeTitle(svg, name, subtitle) {
     svg.append("text")
@@ -64,10 +66,6 @@ function makeAxisTitles(svg, yaxis, xaxis) {
         .style("text-anchor", "middle")
         .style("font-family", "sans-serif")
         .text(xaxis);
-}
-function imp(var1){
-    console.log("dasda");
-    console.log(var1);
 }
 
 // Create the color function, and generate data for legends
@@ -175,13 +173,13 @@ d3.json(data_directory).then( function(json) {
             d3.select("#tooltip").classed("hidden", false)
 
             current_country =  d.currentTarget.__data__.properties.name
-            var country_data_parsed = []
+            var country_data_parsed = [{"columns": ["Year", "Data"]}]
 
-            d3.csv(csv_access_access).then( function(data){
+            d3.csv(csv_access).then( function(data){
                 var country_data_raw = findCountryData(current_country, data)
-                Object.keys(country_data_raw).map((key) => country_data_parsed.push({"Year": key, "Data": country_data_raw[key]}));
-                console.log(country_data_raw)
-                console.log(country_data_parsed)
+                Object.keys(country_data_raw).map((key) => country_data_parsed.push({"Year": key, "Data": parseFloat(country_data_raw[key])}));
+                current_data = country_data_parsed
+
             })
 
           
@@ -248,21 +246,31 @@ d3.json(data_directory).then( function(json) {
 
 });
 
-d3.csv(csv_file).then( function(data) {
-    current_data = data;
+d3.csv(csv_access).then( function(xdata) {
+    delete xdata["columns"]
+    console.log(xdata)
+
+
+    var country_data_parsed = [{"columns": ["Year", "Data"]}]
+    var country_data_raw = findCountryData("Brazil", xdata)
+    console.log(country_data_raw)
+    delete country_data_raw["country_name"]
+
+    Object.keys(country_data_raw).map((key) => country_data_parsed.push({"Year": key, "Data": parseFloat(country_data_raw[key])}));
+    var data = country_data_parsed
+
+
 
     var band = d3.scaleBand()
-        .domain(data.map(d => d.State))
+        .domain(data.map(d => d.Year))
         .range([0, 2 * Math.PI])
         .align(0)
 
 
-    console.log(current_data)
-
     var radial = d3.scaleRadial()
         .domain([0, d3.max(data,(d, _, data) => {
             let total = 0;
-            for (let i = 1; i < data.columns.length; ++i) total += d[data.columns[i]] = +d[data.columns[i]];
+            for (let i = 1; i < data[0].columns.length; ++i) total += d[data[0].columns[i]] = +d[data[0].columns[i]];
             return total;  
             })])
         .range([innerRadius, outerRadius])
@@ -270,22 +278,22 @@ d3.csv(csv_file).then( function(data) {
     var ordinal =d3.scaleSequential(d3.interpolateBlues)
         .domain([0, d3.max(data,(d, _, data) => {
             let total = 0;
-            for (let i = 1; i < data.columns.length; ++i) total += d[data.columns[i]] = +d[data.columns[i]];
+            for (let i = 1; i < data[0].columns.length; ++i) total += d[data[0].columns[i]] = +d[data[0].columns[i]];
             return total;  
             })])
 
     var arc = d3.arc()
         .innerRadius(d => radial(d[0]))
         .outerRadius(d => radial(d[1]))
-        .startAngle(d => band(d.data.State))
-        .endAngle(d => band(d.data.State) + band.bandwidth())
+        .startAngle(d => band(d.data.Year))
+        .endAngle(d => band(d.data.Year) + band.bandwidth())
         .padAngle(0.01)
         .padRadius(innerRadius)
         
 
     svg2.append("g")
         .selectAll("g")
-        .data(d3.stack().keys(data.columns.slice(1))(data))
+        .data(d3.stack().keys(data[0].columns.slice(1))(data))
         .join("g")
         .selectAll("path")
         .data(d => d)
@@ -301,7 +309,7 @@ d3.csv(csv_file).then( function(data) {
                 .data(data)
                 .join("g")
                 .attr("transform", d => `                                                                                                                                                                           
-                    rotate(${((band(d.State) + band.bandwidth() / 2) * 180 / Math.PI - 90)})
+                    rotate(${((band(d.Year) + band.bandwidth() / 2) * 180 / Math.PI - 90)})
                     translate(${innerRadius},0)
                 `)
     
@@ -310,10 +318,10 @@ d3.csv(csv_file).then( function(data) {
         .attr("stroke", "#000")
 
     g.append("text")
-        .attr("transform", d => (band(d.State) + band.bandwidth() / 2 + Math.PI / 2) % (2 * Math.PI) < Math.PI
+        .attr("transform", d => (band(d.Year) + band.bandwidth() / 2 + Math.PI / 2) % (2 * Math.PI) < Math.PI
             ? "rotate(90)translate(0,16)"
             : "rotate(-90)translate(0,-9)")
-        .text(d => d.State)
+        .text(d => d.Year)
     
 
     var g = svg2.append("g")
@@ -335,4 +343,3 @@ d3.csv(csv_file).then( function(data) {
                 .attr("r", radial)
                 .attr("transform", "translate(" + ((w2) / 2) + "," + ((h2) / 2) + ")");
 });
-
