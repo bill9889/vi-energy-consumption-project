@@ -6,10 +6,51 @@
     <title>D3 Page Template</title>
     <script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script> 
     <style type="text/css">
+    body{
+        font-family: "Gill Sans", sans-serif;
+    }
+    select{
+        width: 35rem;
+        height: 3rem;
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        border-radius: 5px;
+    }
+
+    .information{
+        width: 35rem;
+        height: 50rem;
+        font-size: 1.25rem;
+        background-color: white;
+        border: 4px solid rgb(35, 35, 133);
+        border-radius: 15px;
+    }
+    .data{
+        padding: 20px 40px;
+    }
+
+    .title{
+        margin: 0;
+        padding: 1rem;
+        text-align: center;
+        background-color: rgb(118, 221, 255);
+        border-radius: 10px 10px 0 0;
+    }
+    
+    .chart{
+        float:left; display:inline; width: 30rem;
+    }
+
+    .select-container{
+        float:left; display:inline; width: 40rem;
+        margin-left: 10rem;
+    }
 
     #Plot1 {
         position: absolute;
+        top: 10rem;
     }
+    
 
     #tooltip {
         position: absolute;
@@ -36,11 +77,67 @@
         font-size: 16px;
         line-height: 16px;
     }
+
+    .secondary_label{
+        font-weight: 500;
+    }
+    h2{
+        font-size: 2rem;
+    }
+
+    h3{
+        border: 4px solid rgb(35, 35, 133);
+        border-radius: 5px;
+        background-color:rgb(202, 229, 238);
+        padding: 10px 10px;
+    }
+
+    .description{
+        font-weight: 500;
+    }
+    .dropdown-label{
+        font-size: 1.5rem;
+        margin-top: 3rem;
+    }
+
     </style>
 </head>
 
 <body>
-    <div>
+    <div class="select-container">
+        <h1 class="dropdown-label">Please select a dataset:</h1>
+        <select name="format" id="format" onchange="changeTheme()">
+            <option value="Inflation">Inflation</option>
+            <option value="Energy Access">Energy Access</option>
+            <option value="Secondary Enrollment">Secondary Enrollment</option>
+          </select>
+          <div class="information">
+            <h1 class="title">Information</h1>
+            <div class="data">
+                <h2>Country: 
+                    <span class="secondary_label" id="country"></span>
+                </h2>
+                <h2>Variable 1: 
+                    <span class="secondary_label">Energy consumption</span>
+                </h2>
+                <h3>Description:
+                    <span class="description">
+                        This data corresponds to the production of electricity plants and electricity and heat plants. 
+                        Losses obtained from transmission, distribution and transformation and the own use of energy 
+                        for the power plants are subtracted from the data.
+                    </span>
+                </h3>
+                <h2>Variable 2: 
+                    <span class="secondary_label" id="secondary_variable"></span>
+                </h2>
+                <h3>Description:
+                    <span class="secondary_label" id="secondary_description"></span>
+                </h3>
+            </div>
+          </div>
+    </div>
+
+    <div class="chart">
         <div id="Plot1"></div>
         <div id="Plot2"></div>
     </div>
