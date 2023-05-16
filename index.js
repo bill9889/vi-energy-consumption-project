@@ -52,47 +52,6 @@ d3.csv(csv_energy_consumption).then(function (data) {
     consumption_data = data;
 });
 
-function makeTitle(svg, name, subtitle) {
-    svg.append("text")
-        .attr("transform", "translate(" + padding + "," + 25 + ")")
-        .attr("dy", "0em")
-        .attr("font-size", "1.2em")
-        .style("text-anchor", "left")
-        .style("font-family", "sans-serif")
-        .text(name);
-
-    svg.append("text")
-        .attr("transform", "translate(" + padding + "," + 25 + ")")
-        .attr("dy", "1.4em")
-        .attr("font-size", "0.9em")
-        .style("text-anchor", "left")
-        .style("opacity", 0.7)
-        .style("font-family", "sans-serif")
-        .text(subtitle);
-}
-
-function makeAxisTitles(svg, yaxis, xaxis) {
-    svg.append("text")
-        .attr(
-            "transform",
-            "translate(" + padding / 5 + ", " + h / 2 + ") rotate(-90)"
-        )
-        .attr("dy", "1em")
-        .style("font-size", "1.2em")
-        .style("text-anchor", "middle")
-        .style("font-family", "sans-serif")
-        .text(yaxis);
-
-    svg.append("text")
-        .attr("transform", "translate(" + w / 2 + "," + (h - padding / 2) + ")")
-        .attr("dy", "1em")
-        .attr("class", "x-axis-title")
-        .attr("font-size", "1.2em")
-        .style("text-anchor", "middle")
-        .style("font-family", "sans-serif")
-        .text(xaxis);
-}
-
 var color = d3.scaleSequential(d3.interpolateViridis).domain([0, 120000]);
 
 var formatAsThousands = d3.format(",")
@@ -467,9 +426,7 @@ function updateSVG(data) {
         .attr("d", arc)
         .attr("transform", "translate(" + w2 / 2 + "," + h2 / 2 + ")")
         .style("fill", function (d) {
-            //MAX 3895,436156
-            //MIN 18,96851107
-            var value = 60000; //d.properties.income;
+            var value = 60000;
             if (current_country === "") {
                 current_country = "Default";
             }
@@ -478,9 +435,6 @@ function updateSVG(data) {
                 consumption_data
             );
 
-            // console.log(country_consumption_data[d.data["Year"]])
-            // console.log(d.data["Year"])
-            // console.log(d.data["Data"])
             if (checkRange(country_consumption_data[d.data["Year"]], 0, 999)) {
                 return "#FFB888";
             } else if (
