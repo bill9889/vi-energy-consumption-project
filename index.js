@@ -242,39 +242,6 @@ d3.json(data_directory).then(function (json) {
             .text(d.currentTarget.__data__.properties.name);
 
         d3.select("#tooltip").classed("hidden", false);
-
-        // var update_data = calc_data(d.properties)
-        // update_poly = []
-        // update_data.forEach(function(d, i) {
-        //     x = (radius * d) * (1 - Math.sin(i * (2*Math.PI) / total))
-        //     x += (h/2 + padding*spider_ratio - (radius *d))
-        //     y = (radius * d) * (1 - Math.cos(i * (2*Math.PI) / total))
-        //     y += (h/2 + padding - (radius * d))
-        //     update_poly.push({ 'x' : x, 'y': y})
-        // })
-        // svg2.selectAll("circle")
-        //     .data(update_data)
-        //     .transition()
-        //     .duration(200)
-        //     .attr("cx", function(l, i) { return ( (radius * l) * (1 - Math.sin(i * radians / total)) )})
-        //     .attr("cy", function(l, i) { return ( (radius * l) * (1 - Math.cos(i * radians / total)) )})
-        //     .attr("r", 5)
-        //     .attr("transform", function(l) { return ("translate(" + (h/2 + padding*spider_ratio - (radius * l)) + "," + (h/2 + padding - (radius * l)) + ")") })
-        //     .attr("fill", "black")
-        //     .attr("opacity", "0.8")
-
-        // svg2.selectAll("polygon")
-        //     .data([update_poly])
-        //     .transition()
-        //     .duration(200)
-        //     .style("stroke", "black")
-        //     .style('fill', "gray")
-        //     .attr("points",function(l) {
-        //         return l.map(function(l) {
-        //             return [l.x, l.y].join(",");
-        //         }).join(" ")
-        //     })
-        //     .attr("opacity", 0.5)
     });
 
     geos.on("mouseout", function (d) {
