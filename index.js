@@ -216,8 +216,7 @@ d3.csv(csv_inflation).then(function (xdata) {
         .attr("d", arc)
         .attr("transform", "translate(" + w2 / 2 + "," + h2 / 2 + ")")
         .style("fill", function (d) {
-            //Get data value
-            var value = 60000; //d.properties.income;
+            var value = 60000;
             var country_consumption_data = findCountryData(
                 current_country,
                 consumption_data
