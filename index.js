@@ -1,6 +1,5 @@
 //Data
 var data_directory = "maps/latin-america.geojson";
-var csv_file = "data-dummy.csv";
 var csv_access = "csv_assets/energy_access.csv";
 var csv_energy_consumption = "csv_assets/energy_consumption.csv";
 var csv_inflation = "csv_assets/inflation.csv";
