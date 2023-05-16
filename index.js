@@ -93,65 +93,9 @@ function makeAxisTitles(svg, yaxis, xaxis) {
         .text(xaxis);
 }
 
-// Create the color function, and generate data for legends
-colorlegend = [20e3, 40e3, 60e3, 80e3, 100e3];
 var color = d3.scaleSequential(d3.interpolateViridis).domain([0, 120000]);
 
-function makeXscale(data, name) {
-    var min = d3.min(data.features, function (d) {
-        return d.properties[name];
-    });
-    var max = d3.max(data.features, function (d) {
-        return d.properties[name];
-    });
-    var xScale = d3
-        .scaleLinear()
-        .domain([min, max])
-        .range([0 + padding + 40, w - padding]);
-
-    return xScale;
-}
-
-// Function to make legend for chloropleth
-function makeLegend(svg, data, colorfunc, yoffset = h / 2 - 100) {
-    // Create legend
-    var legend = svg
-        .selectAll("g")
-        .data(data)
-        .enter()
-        .append("g")
-        .attr("transform", function (d, i) {
-            return (
-                "translate(" + -100 + "," + (yoffset + padding + i * 20) + ")"
-            );
-        });
-
-    legend
-        .append("rect")
-        .attr("class", "legend-rect")
-        .attr("x", w - 150)
-        .attr("width", 19)
-        .attr("height", 19)
-        .attr("fill", function (d) {
-            return color(d);
-        });
-
-    legend
-        .append("text")
-        .attr("class", "legend-text")
-        .attr("x", w - 100)
-        .attr("font-family", "sans-serif")
-        .attr("y", 9.5)
-        .attr("dy", "0.4em")
-        .attr("font-size", "0.8em")
-        .text(function (d) {
-            return formatAsThousands(d);
-        });
-
-    return legend;
-}
-
-var formatAsThousands = d3.format(","); //e.g. converts 123456 to "123,456"
+var formatAsThousands = d3.format(",")
 
 //Create SVG element
 var svg = d3
@@ -175,7 +119,7 @@ d3.json(data_directory).then(function (json) {
 
     var path = d3.geoPath(projection);
 
-    //Bind data and create one path per GeoJSON feature
+
     var geos = svg
         .selectAll("path")
         .data(json.features)
@@ -184,8 +128,7 @@ d3.json(data_directory).then(function (json) {
         .attr("d", path)
         .attr("transform", "translate(-50,50)")
         .style("fill", function (d) {
-            //Get data value
-            var value = 60000; //d.properties.income;
+            var value = 60000; 
             if (value) {
                 return color(value);
             } else {
